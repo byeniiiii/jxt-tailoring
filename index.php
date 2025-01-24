@@ -113,7 +113,7 @@
         <!-- Left Section: Form -->
         <div class="form-section">
             <h2>Log In</h2>
-            <p>Welcome back! Please login to your account.</p>
+            <p>Welcome! Please login to your account.</p>
             <form method="POST" action="login.php">
                 <input type="text" name="username" placeholder="Username" required>
                 <input type="password" name="password" placeholder="Password" required>
