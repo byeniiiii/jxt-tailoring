@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Login</title>
+    <title>Customer Signup</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <?php include '../database.php'; ?>
     <style>
         /* General Reset */
         * {
@@ -22,7 +23,7 @@
             background: linear-gradient(to right, #000000, #FF8C00);
         }
 
-        /* Login Form Container */
+        /* Signup Form Container */
         .form-container {
             background: #fff;
             padding: 40px;
@@ -75,7 +76,7 @@
             background: #e07b00;
         }
 
-        .form-container .signup-link {
+        .form-container .login-link {
             font-size: 0.8rem;
             color: #FF8C00;
             text-decoration: none;
@@ -83,63 +84,41 @@
             margin-top: 20px;
         }
 
-        .form-container .signup-link:hover {
+        .form-container .login-link:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="form-container">
-        <h2>Log In</h2>
-        <p>Welcome back! Please log in to your account.</p>
+        <h2>Sign Up</h2>
+        <p>Create your account</p>
         <form method="POST" action="">
+            <input type="text" name="first_name" placeholder="First Name" required>
+            <input type="text" name="last_name" placeholder="Last Name" required>
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
+            <button type="submit">Sign Up</button>
         </form>
-        <a href="signup.php" class="signup-link">Don't have an account? Sign up here</a>
+        <a href="index.php" class="login-link">Already have an account? Log in here</a>
     </div>
 
     <?php
-    session_start();
-
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $first_name = $_POST['first_name'];
+        $last_name = $_POST['last_name'];
         $username = $_POST['username'];
-        $password = $_POST['password'];
+        $password = password_hash($_POST['password'], PASSWORD_BCRYPT); // Hashing the password for security
 
-        // Database connection
-        $servername = "localhost";
-        $username_db = "root";
-        $password_db = "";
-        $dbname = "your_database_name"; // Replace with your actual database name
 
-        // Create connection
-        $conn = new mysqli($servername, $username_db, $password_db, $dbname);
+        // Insert data into the customers table
+        $sql = "INSERT INTO customers (first_name, last_name, username, contact_number, address, payment_method, password) VALUES ('$first_name', '$last_name', '$username', '', '', '', '$password')";
 
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        // Validate user credentials
-        $sql = "SELECT * FROM customers WHERE username='$username'";
-        $result = $conn->query($sql);
-
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            if (password_verify($password, $row['password'])) {
-                // Set session variables
-                $_SESSION['username'] = $username;
-                $_SESSION['first_name'] = $row['first_name'];
-
-                echo "<script>alert('Login successful! Redirecting to home...');</script>";
-                echo "<script>window.location.href = 'home.php';</script>";
-                exit();
-            } else {
-                echo "<script>alert('Invalid password. Please try again.');</script>";
-            }
+        if ($conn->query($sql) === TRUE) {
+            echo "<script>alert('Signup successful! Redirecting to login page...');</script>";
+            echo "<script>window.location.href = 'index.php';</script>";
         } else {
-            echo "<script>alert('Invalid username. Please try again.');</script>";
+            echo "<script>alert('Error: " . $sql . "<br>" . $conn->error . "');</script>";
         }
 
         $conn->close();
