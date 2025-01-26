@@ -111,7 +111,7 @@
         $servername = "localhost";
         $username_db = "root";
         $password_db = "";
-        $dbname = "your_database_name"; // Replace with your actual database name
+        $dbname = "jxt_db"; // Replace with your actual database name
 
         // Create connection
         $conn = new mysqli($servername, $username_db, $password_db, $dbname);
